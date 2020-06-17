@@ -1,0 +1,60 @@
+# We want to validate lint fixes on modified files
+name: Build
+# This workflow is triggered on pull request related events.
+on:
+  pull_request:
+    ## Run if PR is
+    #
+    # - updated by pushing code, changing base branch, another PR merged into this branch
+    # - opened newly
+    # - updated with changes from target / base branch
+    # - reopened
+    #
+    ##
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  build:
+    # Job name is ESLint
+    name: ESLint & TSC
+    # dynamically select the OS from matrix
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          # let's stick to a Ubuntu LTS image
+          - ubuntu-18.04
+        node-version:
+          # latest stable node
+          - 14.x
+        prefix:
+          # this is obtained by running a step to get `git branch -all`
+          # without configuring this, git refuses to accept branches are present
+          # so git might say master branch does not exist, but remotes/origin/master does
+          - remotes/origin/
+    steps:
+      # use Github's template action for checkout
+      - name: git checkout
+        uses: actions/checkout@v2
+        with:
+          # since we compare diff between 2 branches
+          # it is best to have full depth
+          fetch-depth: 0
+      - name: setup node ${{ matrix.node-version }}
+        uses: actions/setup-node@v1.4.1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: yarn install
+        # this is close to npm ci
+        # when running in a CI, we can disable lot of interactive functionalities of Yarn
+        # to focus only on the job of installing and setting up node_modules
+        run: yarn --frozen-lockfile --ignore-engines --ignore-optional --non-interactive --silent --ignore-scripts --production=false
+        # validate type definitions are correct
+        # by running TypeScript checks
+      - name: tsc
+        run: yarn build
+      # anyone looking at this step should be able to easily find out
+      # that build is running against the right base / target branch
+      # hence we print the name of the target branch
+      - name: lint diff with ${{ github.event.pull_request.base.ref }}
+        run: sh scripts/github-build.sh ${{ matrix.prefix }}${{ github.event.pull_request.base.ref }} ${{ matrix.prefix }}${{ github.event.pull_request.head.ref }}

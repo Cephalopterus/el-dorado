@@ -2,6 +2,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/node,macos,linux,windows,webstorm+all,visualstudiocode,sublimetext,androidstudio,android
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,macos,linux,windows,webstorm+all,visualstudiocode,sublimetext,androidstudio,android
 
+### ignore TypeScript outputs
+dist/
+
 ### Android ###
 # Built application files
 *.apk

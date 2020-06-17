@@ -5,14 +5,6 @@ dotenv.config();
 
 const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
 
-console.log("===============================================");
-console.log(DB_HOST);
-console.log(DB_PORT);
-console.log(DB_NAME);
-console.log(DB_USER);
-console.log(DB_PASSWORD);
-console.log("===============================================");
-
 const connection = new Sequelize.Sequelize(DB_NAME!, DB_USER!, DB_PASSWORD!, {
   dialect: "postgres",
   host: DB_HOST,

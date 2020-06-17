@@ -26,7 +26,7 @@ jobs:
           - ubuntu-18.04
         node-version:
           # latest stable node
-          - 12.x
+          - 14.x
         prefix:
           # this is obtained by running a step to get `git branch -all`
           # without configuring this, git refuses to accept branches are present
@@ -42,7 +42,8 @@ jobs:
           fetch-depth: 0
       - name: setup node ${{ matrix.node-version }}
         uses: actions/setup-node@v1.4.1
-      # Yarn caching directory can be extracted and used in later stages
+        with:
+          node-version: ${{ matrix.node-version }}
       - name: yarn install
         # this is close to npm ci
         # when running in a CI, we can disable lot of interactive functionalities of Yarn

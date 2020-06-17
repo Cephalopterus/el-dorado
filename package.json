@@ -1,0 +1,10 @@
+{
+  "name": "el-dorado",
+  "version": "1.0.0",
+  "description": "Backend for slot booking app",
+  "main": "index.ts",
+  "repository": "git@github.com:crimelabs786/el-dorado.git",
+  "author": "crimelabs786 <56079307+crimelabs786@users.noreply.github.com>",
+  "license": "MIT",
+  "private": true
+}

@@ -1,4 +1,5 @@
-import * as ORM from "sequelize";
+import { Sequelize } from "sequelize-typescript";
+import { User, UserSchema } from "./models/user";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require("dotenv").config();
 
@@ -34,7 +35,7 @@ if (!DB_PORT || isNaN(DB_PORT as any)) {
   );
 }
 
-const connection = new ORM.Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
+const connection = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   dialect: "postgres",
   host: DB_HOST,
   port: Number(DB_PORT),
@@ -46,34 +47,20 @@ const connection = new ORM.Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   },
 });
 
-class User extends ORM.Model {}
-User.init(
-  {
-    // attributes
-    firstName: {
-      type: ORM.STRING,
-      allowNull: false,
-    },
-    lastName: {
-      type: ORM.STRING,
-    },
-  },
-  {
-    modelName: "userlogin",
-    timestamps: true,
-    sequelize: connection,
-    // options
-  }
-);
+connection.addModels([User]);
+
+const john: UserSchema = {
+  firstName: "John",
+  lastName: "Doe",
+};
 
 (async () => {
   await connection.sync({
     force: true,
     logging: console.log,
   });
-  const user = await User.create({
-    firstName: "John",
-    lastName: "Doe",
-  });
+  const dbVersion = await connection.databaseVersion();
+  console.log(`Database version: ${dbVersion}`);
+  const user = await User.create(john);
   console.log(user);
 })();

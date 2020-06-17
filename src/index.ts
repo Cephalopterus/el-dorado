@@ -30,7 +30,7 @@ if (!DB_PASSWORD) {
 
 if (!DB_PORT || isNaN(DB_PORT as any)) {
   throw new Error(
-    `Expected Database port to not be ${DB_PORT}. Make sure the .env file has the entry for database password`
+    `Expected Database port to not be ${DB_PORT}. Make sure the .env file has the entry for database port`
   );
 }
 

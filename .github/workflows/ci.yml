@@ -51,7 +51,7 @@ jobs:
         # validate type definitions are correct
         # by running TypeScript checks
       - name: tsc
-        run: yarn tsc -p tsconfig.json
+        run: yarn build
       # anyone looking at this step should be able to easily find out
       # that build is running against the right base / target branch
       # hence we print the name of the target branch

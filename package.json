@@ -8,7 +8,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "tsc -p tsconfig.json && node dist/index.js"
+    "start": "yarn build && node dist/index.js",
+    "build": "tsc -p tsconfig.json"
   },
   "husky": {
     "hooks": {

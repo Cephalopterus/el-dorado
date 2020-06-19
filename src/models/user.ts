@@ -1,55 +1,24 @@
-import {
-  Table,
-  Model,
-  AllowNull,
-  Column,
-  TableOptions,
-  CreatedAt,
-  UpdatedAt,
-  DeletedAt,
-  PrimaryKey,
-  IsUUID,
-} from "sequelize-typescript";
-import { UUID, UUIDV4 } from "sequelize";
+import { UniqueItems, Email, Pattern, Default } from "@tsed/common";
+import { BaseSchema } from "./base";
+import "@tsed/ajv";
 
-const tableOptions: TableOptions = {
-  modelName: "userlogin",
-  timestamps: true,
-};
+const nameRegEx = /[a-zA-Z]/;
 
-export interface BaseSchema {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date;
-}
+export class UserSchema extends BaseSchema {
+  @UniqueItems(true)
+  id: number;
 
-export interface UserSchema extends Partial<BaseSchema> {
+  @UniqueItems(true)
+  @Email()
+  email: string;
+
+  @Pattern(nameRegEx)
   firstName: string;
-  lastName?: string;
-}
 
-@Table(tableOptions)
-export class User extends Model<User> implements UserSchema {
-  @PrimaryKey
-  @IsUUID(4)
-  @Column({ type: UUID, defaultValue: UUIDV4 })
-  id!: string;
+  @Pattern(nameRegEx)
+  lastName: string;
 
-  @AllowNull(false)
-  @Column
-  firstName!: string;
-
-  @AllowNull(true)
-  @Column
-  lastName?: string;
-
-  @CreatedAt
-  createdAt: Date;
-
-  @UpdatedAt
-  updatedAt: Date;
-
-  @DeletedAt
-  deletedAt: Date;
+  @Pattern(nameRegEx)
+  @Default("")
+  middleName?: string;
 }

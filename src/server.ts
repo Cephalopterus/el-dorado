@@ -25,7 +25,7 @@ const rootDir = __dirname;
   componentsScan: [`${rootDir}/services/*.ts`, `${rootDir}/repositories/*.ts`],
   typeorm: [
     {
-      name: "postgres",
+      name: "default",
       type: "postgres",
       synchronize: true,
       host: process.env.DB_HOST,

@@ -1,4 +1,4 @@
-import { Service, AfterRoutesInit, Injectable } from "@tsed/common";
+import { Service, AfterRoutesInit } from "@tsed/common";
 import { UserSchema as User } from "../models/user";
 import { Connection } from "typeorm";
 import { TypeORMService } from "@tsed/typeorm";
@@ -22,6 +22,6 @@ export class UserService implements AfterRoutesInit {
      * Retrieve postgres connection
      * After routes have been initialized
      */
-    this.connection = this.typeORMService.get("postgres");
+    this.connection = this.typeORMService.get("default");
   }
 }

@@ -11,14 +11,6 @@ import { UserRepository } from "../repositories/user";
 import { inspect } from "util";
 import { User } from "../entities/user";
 
-interface IUser {
-  id: number;
-  email: string;
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-}
-
 @Controller("/user")
 export class UserController {
   constructor(private readonly userRepository: UserRepository) {}
@@ -36,12 +28,11 @@ export class UserController {
   }
 
   @Get("/:id")
-  async getUserById(@PathParams("id") id: string): Promise<IUser> {
-    return {
-      id: Number(id),
-      email: "test@example.com",
-      firstName: "John",
-      lastName: "Doe",
-    };
+  async getUserById(@PathParams("id") id: string): Promise<User | undefined> {
+    return this.userRepository.findOne({
+      where: {
+        id: Number(id),
+      },
+    });
   }
 }

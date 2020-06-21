@@ -6,5 +6,6 @@
     "typescript",
     "typescriptreact"
   ],
-  "yaml.schemaStore.enable": true
+  "yaml.schemaStore.enable": true,
+  "debug.javascript.codelens.npmScripts": "never"
 }

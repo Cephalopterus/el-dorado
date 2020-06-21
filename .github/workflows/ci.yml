@@ -20,6 +20,7 @@ jobs:
     # dynamically select the OS from matrix
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: true
       matrix:
         os:
           # let's stick to a Ubuntu LTS image
@@ -27,11 +28,16 @@ jobs:
         node-version:
           # latest stable node
           - 14.x
-        prefix:
-          # this is obtained by running a step to get `git branch -all`
-          # without configuring this, git refuses to accept branches are present
-          # so git might say master branch does not exist, but remotes/origin/master does
-          - remotes/origin/
+    services:
+      postgres:
+        image: postgres:12.3
+        env:
+          POSTGRES_USER: demo
+          POSTGRES_PASSWORD: passW0rd
+          POSTGRES_DB: test
+        ports:
+          - 27899:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       # use Github's template action for checkout
       - name: git checkout
@@ -49,12 +55,18 @@ jobs:
         # when running in a CI, we can disable lot of interactive functionalities of Yarn
         # to focus only on the job of installing and setting up node_modules
         run: yarn --frozen-lockfile --ignore-engines --ignore-optional --non-interactive --silent --ignore-scripts --production=false
+      - name: tsc
         # validate type definitions are correct
         # by running TypeScript checks
-      - name: tsc
         run: yarn build
-      # anyone looking at this step should be able to easily find out
-      # that build is running against the right base / target branch
-      # hence we print the name of the target branch
-      - name: lint diff with ${{ github.event.pull_request.base.ref }}
-        run: sh scripts/github-build.sh ${{ matrix.prefix }}${{ github.event.pull_request.base.ref }} ${{ matrix.prefix }}${{ github.event.pull_request.head.ref }}
+      - name: lint diff with ${{ github.event.pull_request.base.label }}
+        # anyone looking at this step should be able to easily find out
+        # that build is running against the right base / target branch
+        # hence we print the name of the target branch
+        run: curl -s -X GET -G "https://api.github.com/repos/${{ github.event.pull_request.base.repo.full_name }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[] | select( .status != "deleted" ) | select(.filename|test(".[jt]sx?$")) | .filename' | xargs yarn eslint --quiet
+      - name: verify postgres
+        run: PGPASSWORD="passW0rd" psql -h localhost -p 27899 -d test -U demo -c "SELECT now();"
+      - name: creating env for CI postgres access
+        run: \cp .env.ci.sample .env
+      - name: test api endpoints
+        run: yarn test

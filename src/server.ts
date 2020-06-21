@@ -5,6 +5,7 @@ import {
   GlobalAcceptMimesMiddleware,
 } from "@tsed/common";
 import "@tsed/typeorm";
+import "@tsed/platform-express";
 import cookie from "cookie-parser";
 import compress from "compression";
 import methodOverride from "method-override";

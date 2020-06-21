@@ -8,8 +8,8 @@ import {
 } from "@tsed/common";
 import { UserSchema } from "../models/user";
 import { UserRepository } from "../repositories/user";
-import { inspect } from "util";
 import { User } from "../entities/user";
+import { BadRequest } from "@tsed/exceptions";
 
 @Controller("/user")
 export class UserController {
@@ -17,8 +17,16 @@ export class UserController {
 
   @Post()
   async createUser(@BodyParams() user: UserSchema): Promise<User> {
-    $log.info(inspect(user));
-    $log.info(this.userRepository);
+    /**
+     * check if email exists
+     * Insert only if non-existent
+     */
+    const userWithExistingEmail = await this.userRepository.findOne({
+      where: { email: user.email },
+    });
+    if (userWithExistingEmail) {
+      throw new BadRequest(`User with email ID ${user.email} already exists`);
+    }
     return this.userRepository.save(user);
   }
 

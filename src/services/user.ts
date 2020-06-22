@@ -17,6 +17,7 @@ export class UserService implements AfterRoutesInit {
   findAll(): Array<User> {
     return this.users;
   }
+
   $afterRoutesInit(): void | Promise<any> {
     /**
      * Retrieve postgres connection

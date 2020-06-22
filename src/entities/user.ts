@@ -42,6 +42,9 @@ export class User extends UserSchema {
   @Column({ unique: true, type: "text" })
   email: string;
 
+  @Column()
+  password: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
